@@ -61,7 +61,7 @@ _Loading CommonJS modules is not currently supported in this loader and likely w
 
 The following [pluggable extras](dist/extras) can be dropped in with either the s.js or system.js loader:
 
-* [AMD loading](dist/extras/amd.js) support (through `Window.define` which is created).
+* [AMD loading](dist/extras/amd.js) support (through `Window.pentaDefine` which is created).
 * [Named register](dist/extras/named-register.js) supports `PentaSystem.register('name', ...)` named bundles which can then be imported as `PentaSystem.import('name')` (as well as AMD named define support)
 * [Dynamic import maps](dist/extras/dynamic-import-maps.js) support. This is currently a _potential_ new standard [feature](https://github.com/guybedford/import-maps-extensions#lazy-loading-of-import-maps).
 
