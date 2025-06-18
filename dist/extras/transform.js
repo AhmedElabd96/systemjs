@@ -10,7 +10,7 @@
    * Note: This extra is deprecated and will be removed in the next major.
    */
   (function (global) {
-    var systemJSPrototype = global.System.constructor.prototype;
+    var systemJSPrototype = global.PentaSystem.constructor.prototype;
 
     var instantiate = systemJSPrototype.instantiate;
     systemJSPrototype.instantiate = function (url, parent, meta) {

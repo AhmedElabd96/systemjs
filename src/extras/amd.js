@@ -4,13 +4,13 @@ import { errMsg } from '../err-msg.js';
  * Support for AMD loading
  */
 (function (global) {
-  function unsupportedRequire () {
+  function unsupportedRequire() {
     throw Error(process.env.SYSTEM_PRODUCTION ? errMsg(5) : errMsg(5, 'AMD require not supported.'));
   }
 
   var requireExportsModule = ['require', 'exports', 'module'];
 
-  function createAMDRegister (amdDefineDeps, amdDefineExec) {
+  function createAMDRegister(amdDefineDeps, amdDefineExec) {
     var exports = {};
     var module = { exports: exports };
     var depModules = [];
@@ -69,7 +69,7 @@ import { errMsg } from '../err-msg.js';
     var depArg = isNamedRegister ? arg2 : arg1;
     var execArg = isNamedRegister ? arg3 : arg2;
 
-    // The System.register(deps, exec) arguments
+    // The PentaSystem.register(deps, exec) arguments
     var deps, exec;
 
     // define([], function () {})
@@ -93,15 +93,16 @@ import { errMsg } from '../err-msg.js';
     var amdRegister = createAMDRegister(deps, exec);
 
     if (isNamedRegister) {
-      if (System.registerRegistry) {
-        System.registerRegistry[name] = amdRegister;
-        System.register(name, amdRegister[0], amdRegister[1]);
+      if (PentaSystem.registerRegistry) {
+        PentaSystem.registerRegistry[name] = amdRegister;
+        PentaSystem.register(name, amdRegister[0], amdRegister[1]);
       } else
         console.warn(process.env.SYSTEM_PRODUCTION ? errMsg('W6') : errMsg('W6', 'Include named-register.js for full named define support'));
-        // TODO: create new warning number and documentation for using named define without named-register extra
-        System.register(amdRegister[0], amdRegister[1]);
+      // TODO: create new warning number and documentation for using named define without named-register extra
+      PentaSystem.register(amdRegister[0], amdRegister[1]);
+
     } else
-      System.register(amdRegister[0], amdRegister[1]);
+      PentaSystem.register(amdRegister[0], amdRegister[1]);
   };
   global.define.amd = {};
 })(typeof self !== 'undefined' ? self : global);

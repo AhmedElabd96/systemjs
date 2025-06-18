@@ -1,4 +1,4 @@
-System.register(['maptest'], function (_export) {
+PentaSystem.register(['maptest'], function (_export) {
   return {
     setters: [function (map) {
       for (var p in map)

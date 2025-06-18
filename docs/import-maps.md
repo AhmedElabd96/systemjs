@@ -30,7 +30,7 @@ Import maps can be loaded inline or from a separate URL using a `<script type="s
 </script>
 ```
 
-> The import map is fixed as soon as the first `System.resolve` (or indirectly through `System.import`) is called. At this point no new import maps can be loaded currently, although this is under specification discussion at https://github.com/WICG/import-maps/issues/92.
+> The import map is fixed as soon as the first `PentaSystem.resolve` (or indirectly through `PentaSystem.import`) is called. At this point no new import maps can be loaded currently, although this is under specification discussion at https://github.com/WICG/import-maps/issues/92.
 
 ### Imports
 
@@ -131,7 +131,7 @@ For example:
 </script>
 <script>
 setTimeout(() => {
-  System.import('dep');
+  PentaSystem.import('dep');
 }, 10000);
 </script>
 ```
@@ -207,7 +207,7 @@ Previous versions of the import maps spec had support for multiple import maps i
 The `addImportMap` method is available to dynamically extend additional mappings into the import map at any time:
 
 ```js
-System.addImportMap({
+PentaSystem.addImportMap({
   "imports": {
     "y": "/path/to/y.js",
   }

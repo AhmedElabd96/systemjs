@@ -1,21 +1,21 @@
 /*
  * SystemJS named register extension
- * Supports System.register('name', [..deps..], function (_export, _context) { ... })
+ * Supports PentaSystem.register('name', [..deps..], function (_export, _context) { ... })
  *
  * Names are written to the registry as-is
- * System.register('x', ...) can be imported as System.import('x')
+ * PentaSystem.register('x', ...) can be imported as PentaSystem.import('x')
  */
 (function (global) {
-  var System = global.System;
-  setRegisterRegistry(System);
-  var systemJSPrototype = System.constructor.prototype;
-  var constructor = System.constructor;
+  var PentaSystem = global.PentaSystem;
+  setRegisterRegistry(PentaSystem);
+  var systemJSPrototype = PentaSystem.constructor.prototype;
+  var constructor = PentaSystem.constructor;
   var SystemJS = function () {
     constructor.call(this);
     setRegisterRegistry(this);
   };
   SystemJS.prototype = systemJSPrototype;
-  System.constructor = SystemJS;
+  PentaSystem.constructor = SystemJS;
 
   var firstNamedDefine, firstName;
 

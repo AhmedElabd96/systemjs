@@ -1,5 +1,5 @@
 /*
- * Supports loading System.register in workers
+ * Supports loading PentaSystem.register in workers
  */
 import { systemJSPrototype } from '../system-core';
 import { hasSelf } from '../common';

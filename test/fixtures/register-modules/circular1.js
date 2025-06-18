@@ -1,4 +1,4 @@
-System.register(["./circular2.js"], function (_export, _context) {
+PentaSystem.register(["./circular2.js"], function (_export, _context) {
   "use strict";
 
   var fn2, variable2, variable1, output;

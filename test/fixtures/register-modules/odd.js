@@ -1,4 +1,4 @@
-System.register(["./even.js"], function (_export, _context) {
+PentaSystem.register(["./even.js"], function (_export, _context) {
   "use strict";
 
   var even;

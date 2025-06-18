@@ -5,9 +5,9 @@
  *       so will be removed in the next major.
  */
 (function (global) {
-  var systemJSPrototype = global.System.constructor.prototype;
+  var systemJSPrototype = global.PentaSystem.constructor.prototype;
 
-  // hook System.register to know the last declaration binding
+  // hook PentaSystem.register to know the last declaration binding
   var lastRegisterDeclare;
   var systemRegister = systemJSPrototype.register;
   systemJSPrototype.register = function (name, deps, declare) {
@@ -18,7 +18,7 @@
   var getRegister = systemJSPrototype.getRegister;
   systemJSPrototype.getRegister = function () {
     var register = getRegister.call(this);
-    // if it is an actual System.register call, then its ESM
+    // if it is an actual PentaSystem.register call, then its ESM
     // -> dont add named exports
     if (!register || register[1] === lastRegisterDeclare || register[1].length === 0)
       return register;

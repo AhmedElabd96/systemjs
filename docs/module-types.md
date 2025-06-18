@@ -4,7 +4,7 @@ SystemJS supports loading modules that are in the following formats:
 
 | Module Format | s.js | system.js | File Extension |
 | ------------- | ---- | --------- | -------------- |
-| [System.register](/docs/system-register.md) | :heavy_check_mark: | :heavy_check_mark: | * |
+| [PentaSystem.register](/docs/system-register.md) | :heavy_check_mark: | :heavy_check_mark: | * |
 | [JSON Modules](https://github.com/whatwg/html/pull/4407) | [Module Types extra](/dist/extras/module-types.js) | :heavy_check_mark: | *.json |
 | [CSS Modules](https://github.com/w3c/webcomponents/blob/gh-pages/proposals/css-modules-v1-explainer.md) | [Module Types extra](/dist/extras/module-types.js) | :heavy_check_mark: | *.css |
 | [Web Assembly](https://github.com/WebAssembly/esm-integration/tree/master/proposals/esm-integration) | [Module Types extra](/dist/extras/module-types.js) | :heavy_check_mark: | *.wasm |
@@ -32,7 +32,7 @@ Instead of reading the MIME type, the file extension is thus used specifically f
 ```
 
 ```js
-System.import('file.json').then(function (module) {
+PentaSystem.import('file.json').then(function (module) {
   console.log(module.default); // The json as a js object.
 });
 ```
@@ -52,7 +52,7 @@ Note that the term CSS Modules refers to two separate things: (1) the browser sp
 ```
 
 ```js
-System.import('file.css').then(function (module) {
+PentaSystem.import('file.css').then(function (module) {
   const styleSheet = module.default; // A CSSStyleSheet object
   document.adoptedStyleSheets = [...document.adoptedStyleSheets, styleSheet]; // now your css is available to be used.
 });
@@ -88,7 +88,7 @@ _Note that this polyfill does not currently work in IE11._
 }
 </script>
 <script>
-  System.import('/wasm-module.wasm').then(function (m) {
+  PentaSystem.import('/wasm-module.wasm').then(function (m) {
     // calls wasm-dependency square function through Wasm
     m.exampleExport(5); // 25
   });

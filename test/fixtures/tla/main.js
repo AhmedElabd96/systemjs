@@ -1,4 +1,4 @@
-System.register(['./depa.js', './depb.js', './depc.js'], function (_export) {
+PentaSystem.register(['./depa.js', './depb.js', './depc.js'], function (_export) {
   var reporter;
 
   return {

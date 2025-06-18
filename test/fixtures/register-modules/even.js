@@ -1,4 +1,4 @@
-System.register(["./odd.js"], function (_export, _context) {
+PentaSystem.register(["./odd.js"], function (_export, _context) {
   "use strict";
 
   var odd, counter;

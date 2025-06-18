@@ -1,4 +1,4 @@
-System.register(['./depcache5.js'], function(_export) {
+PentaSystem.register(['./depcache5.js'], function(_export) {
   var dep;
   return {
     setters: [function (_dep) { dep = _dep.default }],

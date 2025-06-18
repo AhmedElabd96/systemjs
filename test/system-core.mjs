@@ -6,7 +6,7 @@ import '../src/features/registry.js';
 import { REGISTRY } from '../src/system-core.js';
 import '../src/features/resolve.js';
 
-const SystemLoader = System.constructor;
+const SystemLoader = PentaSystem.constructor;
 
 SystemLoader.prototype[IMPORT_MAP] = { imports: {}, scopes: {} };
 SystemLoader.prototype.prepareImport = () => {};
@@ -38,7 +38,7 @@ describe('Core API', function () {
 
   // TODO: namespace Object property definitions
 
-  it('Supports System.register', async function () {
+  it('Supports PentaSystem.register', async function () {
     loader.instantiate = x => {
       loader.register([], _export => ({ execute () { _export('y', 42) } }));
       return loader.getRegister();
@@ -200,27 +200,27 @@ describe('Core API', function () {
   });
 
   describe('Registry API', function () {
-    it('Supports System.get', function () {
+    it('Supports PentaSystem.get', function () {
       assert.equal(loader.get('x').y, 42);
     });
 
-    it('Supports System.has', function () {
+    it('Supports PentaSystem.has', function () {
       assert.equal(loader.has('x'), true);
     });
 
-    it('Supports System.delete', function () {
+    it('Supports PentaSystem.delete', function () {
       loader.delete('x');
       assert.equal(loader.get('x'), undefined);
     });
 
-    it('Supports System.set', async function () {
+    it('Supports PentaSystem.set', async function () {
       const _x = loader.set('http://x', { y: 43 });
       const x = await loader.import('http://x');
       assert.equal(x.y, 43);
       assert.equal(x, _x);
     });
 
-    it('warns with invalid System.set', async function () {
+    it('warns with invalid PentaSystem.set', async function () {
       let numCalls = 0, lastWarn;
       const originalWarn = console.warn;
       console.warn = msg => {
@@ -233,7 +233,7 @@ describe('Core API', function () {
       assert.match(lastWarn.message, /is not a valid URL to set in the module registry/);
     });
 
-    it('does not warn with valid System.set', async function () {
+    it('does not warn with valid PentaSystem.set', async function () {
       let numCalls = 0, lastWarn;
       const originalWarn = console.warn;
       console.warn = msg => {
@@ -245,8 +245,8 @@ describe('Core API', function () {
       assert.equal(numCalls, 0);
     });
 
-    it('Supports System.resolve', async function () {
-      const resolveReturnValue = System.resolve('http://x');
+    it('Supports PentaSystem.resolve', async function () {
+      const resolveReturnValue = PentaSystem.resolve('http://x');
       const resolvedX = await resolveReturnValue;
       assert(typeof resolveReturnValue === 'string');
       assert.equal(resolvedX, 'http://x');
@@ -266,14 +266,14 @@ describe('Core API', function () {
       assert(foundH);
     });
 
-    it('Supports System.entries', async function () {
+    it('Supports PentaSystem.entries', async function () {
       loader.set('http://i', {a: 'b'});
       await loader.import('http://i');
 
       assert([...loader.entries()].some(entry => entry[0] === 'http://i' && entry[1].a === 'b'));
     })
 
-    it('Supports System.getImportMap', function () {
+    it('Supports PentaSystem.getImportMap', function () {
       const importMap = loader.getImportMap();
 
       assert(
@@ -292,7 +292,7 @@ describe('Loading Cases', function() {
   loader.resolve = (id, parent) => resolveIfNotPlainOrUrl(id, parent || baseUrl);
   loader.instantiate = async function (path) {
     const source = await new Promise((resolve, reject) => fs.readFile(path, (err, source) => err ? reject(err) : resolve(source.toString())));
-    global.System = loader;
+    global.PentaSystem = loader;
     eval(source + '//# sourceURL=' + path);
     return this.getRegister();
   };
@@ -569,7 +569,7 @@ describe('Loading Cases', function() {
       assert.equal(err, 'Error: dep error');
     });
 
-    it('Should support System.delete for retrying execution errors', async function () {
+    it('Should support PentaSystem.delete for retrying execution errors', async function () {
       const loader = new SystemLoader();
       loader.resolve = x => x;
       let thrown = false;

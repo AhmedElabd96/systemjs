@@ -5,7 +5,7 @@
 [![Sponsors on Open Collective](https://opencollective.com/systemjs/sponsors/badge.svg)](#sponsors)
 [![Downloads on JS Delivr](https://data.jsdelivr.com/v1/package/npm/systemjs/badge)](https://www.jsdelivr.com/package/npm/systemjs)
 
-SystemJS is a hookable, standards-based module loader. It provides a workflow where code written for production workflows of native ES modules in browsers ([like Rollup code-splitting builds](https://rollupjs.org/guide/en#code-splitting)), can be transpiled to the [System.register module format](docs/system-register.md) to work in older browsers that don't support native modules, running [almost-native module speeds](#performance) while supporting top-level await, dynamic import, circular references and live bindings, import.meta.url, module types, import maps, integrity and Content Security Policy with compatibility in older browsers back to IE11.
+SystemJS is a hookable, standards-based module loader. It provides a workflow where code written for production workflows of native ES modules in browsers ([like Rollup code-splitting builds](https://rollupjs.org/guide/en#code-splitting)), can be transpiled to the [PentaSystem.register module format](docs/system-register.md) to work in older browsers that don't support native modules, running [almost-native module speeds](#performance) while supporting top-level await, dynamic import, circular references and live bindings, import.meta.url, module types, import maps, integrity and Content Security Policy with compatibility in older browsers back to IE11.
 
 ## Sponsors
 
@@ -34,7 +34,7 @@ Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com
 
 The minimal [2.8KB s.js production loader](dist/s.min.js) includes the following features:
 
-* Loads `System.register` modules, the CSP-compatible [SystemJS module format](docs/system-register.md).
+* Loads `PentaSystem.register` modules, the CSP-compatible [SystemJS module format](docs/system-register.md).
 * Support for loading bare specifier names with [import maps](docs/import-maps.md) via `<script type="systemjs-importmap">`.
 * Supports [hooks](docs/hooks.md) for loader customization.
 
@@ -48,9 +48,9 @@ The [4.2KB system.js loader](dist/system.min.js) adds the following features in 
 
 #### 3. system-node.cjs loader
 
-The [system-node.cjs](/dist/system-node.cjs) loader is a version of SystemJS build designed to run in Node.js, typically for workflows where System modules need to be executed on the server like SSR. It has the following features:
+The [system-node.cjs](/dist/system-node.cjs) loader is a version of SystemJS build designed to run in Node.js, typically for workflows where PentaSystem modules need to be executed on the server like SSR. It has the following features:
 
-* Loading System modules from disk (via `file://` urls) or the network, with included caching that respects the Content-Type header.
+* Loading PentaSystem modules from disk (via `file://` urls) or the network, with included caching that respects the Content-Type header.
 * Import Maps (via the `applyImportMap` api).
 * [Tracing hooks](docs/hooks.md#trace-hooks) and [registry deletion API](docs/api.md#registry) for reloading workflows.
 * Loading global modules with the included [global loading extra](#extras).
@@ -62,12 +62,12 @@ _Loading CommonJS modules is not currently supported in this loader and likely w
 The following [pluggable extras](dist/extras) can be dropped in with either the s.js or system.js loader:
 
 * [AMD loading](dist/extras/amd.js) support (through `Window.define` which is created).
-* [Named register](dist/extras/named-register.js) supports `System.register('name', ...)` named bundles which can then be imported as `System.import('name')` (as well as AMD named define support)
+* [Named register](dist/extras/named-register.js) supports `PentaSystem.register('name', ...)` named bundles which can then be imported as `PentaSystem.import('name')` (as well as AMD named define support)
 * [Dynamic import maps](dist/extras/dynamic-import-maps.js) support. This is currently a _potential_ new standard [feature](https://github.com/guybedford/import-maps-extensions#lazy-loading-of-import-maps).
 
 The following extras are included in system.js loader by default, and can be added to the s.js loader for a smaller tailored footprint:
 
-* [Global loading](dist/extras/global.js) support for loading global scripts and detecting the defined global as the default export. Useful for loading common library scripts from CDN like `System.import('//unpkg.com/lodash')`.
+* [Global loading](dist/extras/global.js) support for loading global scripts and detecting the defined global as the default export. Useful for loading common library scripts from CDN like `PentaSystem.import('//unpkg.com/lodash')`.
 * [Module Types](dist/extras/module-types.js) `.css`, `.wasm`, `.json` [module type](docs/module-types.md) loading support in line with the existing modules specifications.
 
 Since all loader features are hookable, custom extensions can be easily made following the same approach as the bundled extras. See the [hooks documentation](docs/hooks.md) for more information.
@@ -103,14 +103,14 @@ npm install systemjs
 
 * [Import Maps](docs/import-maps.md)
 * [API](docs/api.md)
-* [System.register](docs/system-register.md)
+* [PentaSystem.register](docs/system-register.md)
 * [Loader Hooks](docs/hooks.md)
 * [Module Types](docs/module-types.md)
 
 ## Example Usage
 
-### Loading a System.register module
-You can load [System.register](/docs/system-register.md) modules with a script element in your HTML:
+### Loading a PentaSystem.register module
+You can load [PentaSystem.register](/docs/system-register.md) modules with a script element in your HTML:
 
 ```html
 <script src="system.js"></script>
@@ -118,29 +118,29 @@ You can load [System.register](/docs/system-register.md) modules with a script e
 <script type="systemjs-module" src="import:name-of-module"></script>
 ```
 
-### Loading with System.import
-You can also dynamically load modules at any time with `System.import()`:
+### Loading with PentaSystem.import
+You can also dynamically load modules at any time with `PentaSystem.import()`:
 
 ```js
-System.import('/js/main.js');
+PentaSystem.import('/js/main.js');
 ```
 
-where `main.js` is a module available in the System.register module format.
+where `main.js` is a module available in the PentaSystem.register module format.
 
 ### Bundling workflow
 
 For an example of a bundling workflow, see the Rollup Code Splitting starter project - https://github.com/rollup/rollup-starter-code-splitting.
 
-Note that when building System modules you typically want to ensure anonymous System.register statements like:
+Note that when building PentaSystem modules you typically want to ensure anonymous PentaSystem.register statements like:
 
 ```js
-System.register([], function () { ... });
+PentaSystem.register([], function () { ... });
 ```
 
 are emitted, as these can be loaded in a way that behaves the same as normal ES modules, and **not** named register statements like:
 
 ```js
-System.register('name', [], function () { ... });
+PentaSystem.register('name', [], function () { ... });
 ```
 
 While these can be supported with the named register extension, this approach is typically not recommended for modern modules workflows.
@@ -196,14 +196,14 @@ This can be worked around by adding `crossorigin="anonymous"` as an attribute to
 A list of projects that use or work with SystemJS in providing modular browser workflows. [Post a PR](https://github.com/systemjs/systemjs/edit/master/README.md).
 
 * [beyondjs.com](https://beyondjs.com) -TypeScript first meta-framework for universal microfrontends/micronservices.
-* [esm-bundle](https://github.com/esm-bundle) - list of System.register versions for major libraries, including documentation on how to create a System.register bundle for any npm package.
+* [esm-bundle](https://github.com/esm-bundle) - list of PentaSystem.register versions for major libraries, including documentation on how to create a PentaSystem.register bundle for any npm package.
 * [es-dev-server](https://github.com/open-wc/open-wc/tree/master/packages/es-dev-server) - A web server for developing without a build step.
 * [import map overrides](https://github.com/joeldenning/import-map-overrides/) - Dynamically inject an import map stored in local storage so that you can override the URL for any module. Can be useful for running development modules on localhost against the server.
 * [js-env](https://github.com/jsenv/jsenv-core) - Collection of development tools providing a unified workflow to write JavaScript for the web, node.js or both at the same time.
 * [jspm.org](https://jspm.org) - Package manager for native modules, using SystemJS for backwards compatibility.
 * [single-spa](https://single-spa.js.org/) - JavaScript framework for front-end microservices.
 * [systemjs-webpack-interop](https://github.com/joeldenning/systemjs-webpack-interop) - npm lib for setting webpack public path and creating webpack configs that work well with SystemJS.
-* [@wener/system](https://github.com/wenerme/wode/tree/main/packages/system) - hooks to make System works with npm registry & package.json}
+* [@wener/system](https://github.com/wenerme/wode/tree/main/packages/system) - hooks to make PentaSystem works with npm registry & package.json}
 
 
 ## Compatibility with Webpack
@@ -212,7 +212,7 @@ Code-splitting builds on top of native ES modules, like Rollup offers, are an al
 
 [systemjs-webpack-interop](https://github.com/joeldenning/systemjs-webpack-interop) is a community-maintained npm library that might help you get webpack and systemjs working well together.
 
-As of webpack@4.30.0, it is now possible to compile webpack bundles to System.register format, by modifying your webpack config:
+As of webpack@4.30.0, it is now possible to compile webpack bundles to PentaSystem.register format, by modifying your webpack config:
 
 ```js
 {
@@ -222,7 +222,7 @@ As of webpack@4.30.0, it is now possible to compile webpack bundles to System.re
 }
 ```
 
-If using webpack@<5, the following config is needed to avoid rewriting references to the global `System` variable:
+If using webpack@<5, the following config is needed to avoid rewriting references to the global `PentaSystem` variable:
 
 ```js
 {
@@ -236,7 +236,7 @@ If using webpack@<5, the following config is needed to avoid rewriting reference
 
 ## Using npm packages
 
-Third party libraries and npm packages may be used as long as they are published in [a supported module format](https://github.com/systemjs/systemjs/blob/master/docs/module-types.md). For packages that do not exist in a supported module format, [here is a list of github repos](https://github.com/esm-bundle/) that publish `System.register` versions of popular third party libraries (such as react, react-dom, rxjs, etc).
+Third party libraries and npm packages may be used as long as they are published in [a supported module format](https://github.com/systemjs/systemjs/blob/master/docs/module-types.md). For packages that do not exist in a supported module format, [here is a list of github repos](https://github.com/esm-bundle/) that publish `PentaSystem.register` versions of popular third party libraries (such as react, react-dom, rxjs, etc).
 
 ## Contributing to SystemJS
 

@@ -1,8 +1,8 @@
-## System.register
+## PentaSystem.register
 
 ### What it is
 
-System.register can be considered as a new module format designed to support the exact semantics of ES6 modules within ES5.
+PentaSystem.register can be considered as a new module format designed to support the exact semantics of ES6 modules within ES5.
 
 This format provides support for:
 
@@ -14,7 +14,7 @@ This format provides support for:
 * import assertions
 
 By ensuring we cover all of these semantics, the guarantee is that if code works in browsers in ES modules, the associated
-System.register code can work with s.js providing a legacy fallback workflow that doesn't randomly break at semantic edge cases.
+PentaSystem.register code can work with s.js providing a legacy fallback workflow that doesn't randomly break at semantic edge cases.
 
 This format was originally developed out of collaboration in Traceur, and is supported as an output in Babel, TypeScript, Webpack, and RollupJS.
 
@@ -23,7 +23,7 @@ This format was originally developed out of collaboration in Traceur, and is sup
 The general structure of the format is the following:
 
 ```js
-System.register(['dependency'], function (_export, _context) {
+PentaSystem.register(['dependency'], function (_export, _context) {
   var dep;
   return {
     setters: [function (_dep) {
@@ -49,11 +49,11 @@ better handle circularity cases without deadlock.
 
 The `_context` object contains `_context.import` function corresponding to the contextual dynamic import for the module.
 
-Any `import()` in an ES module can thus be replaced by `_context.import()` to get a semantically identical behaviour for System modules.
+Any `import()` in an ES module can thus be replaced by `_context.import()` to get a semantically identical behaviour for PentaSystem modules.
 
 ### import.meta
 
-The `_context` object contains a `_context.meta` allowing any use of `import.meta` in the ES module to be converted into a `_context.meta` in the System module for semantic equivalence.
+The `_context` object contains a `_context.meta` allowing any use of `import.meta` in the ES module to be converted into a `_context.meta` in the PentaSystem module for semantic equivalence.
 
 #### import.meta.url: String
 
@@ -90,7 +90,7 @@ This can fully support synchronous subgraph execution remaining synchronous whil
 The module wrapper takes the following structure:
 
 ```js
-System.register([...deps...], function (_export, _context) {
+PentaSystem.register([...deps...], function (_export, _context) {
   return {
     setters: [...setters...],
     execute: function () {
@@ -113,12 +113,12 @@ where:
 * `metas: Object[]` - The metadata attached to the module dependency, indexed in the same order as `deps`. This is an optional argument.
   * for import assert the metadata is `{assert: {type: 'javascript'}}`
 
-> Note as of SystemJS 2.0 support for named `System.register(name, deps, declare)` is no longer supported, as instead code optimization approaches that combine modules
+> Note as of SystemJS 2.0 support for named `PentaSystem.register(name, deps, declare)` is no longer supported, as instead code optimization approaches that combine modules
   like with [Rollup's code-splitting workflows](https://rollupjs.org/guide/en#experimental-code-splitting) are recommended instead.
 
-#### Why the System.register name
+#### Why the PentaSystem.register name
 
-Since `System` is the loader name, `System.register` is a function that allows us to _define_ a module directly into the loader instance. When code is executed, we only need to assume that `System` is in the scope of execution.
+Since `PentaSystem` is the loader name, `PentaSystem.register` is a function that allows us to _define_ a module directly into the loader instance. When code is executed, we only need to assume that `PentaSystem` is in the scope of execution.
 
 The advantage is the same as the AMD `define` in that it can support browsers with CSP policies that do not support custom JS evaluation, only script tags from authorized hosts.
 
@@ -142,7 +142,7 @@ export class C {
 ->
 
 ```js
-System.register(['./dep'], function($__export, $__moduleContext) {
+PentaSystem.register(['./dep'], function($__export, $__moduleContext) {
   var s, C, q;
   function func() {
     return q;
@@ -204,7 +204,7 @@ a();
 
 If a.js is imported first, then b.js will execute first. In ES module execution, b.js will successfully call the function export 
 from a.js before a.js has even executed since function bindings are setup before execution. This is supported fully by 
-the deferred loading step in this System.register approach.
+the deferred loading step in this PentaSystem.register approach.
 
 It can be argued that this full support of ES module circular references is unnecessary. There is minimal additional performance
 cost to this extra return statement though and it ensures that during the transition period where ES modules and traditional
@@ -212,7 +212,7 @@ environments are running side-by-side, that the best parity is provided between 
 
 #### Let and Uninitialized Bindings
 
-Due to the hoisting of variable declarations into the outer scope, it is assumed that `let` or `const` should be converted into `var` statements. While TDZ errors are not maintained (it is possible to set a variable before it is declared), the primary goal of the module format is that functional ES module code should be fully supported through System.register, and the converse that functional System.register code be functional ES module code is not a requirement of the format. As such, since functional ES module code should not have to rely on top-level TDZ errors for normal operation, this seems a suitable compromise for the format.
+Due to the hoisting of variable declarations into the outer scope, it is assumed that `let` or `const` should be converted into `var` statements. While TDZ errors are not maintained (it is possible to set a variable before it is declared), the primary goal of the module format is that functional ES module code should be fully supported through PentaSystem.register, and the converse that functional PentaSystem.register code be functional ES module code is not a requirement of the format. As such, since functional ES module code should not have to rely on top-level TDZ errors for normal operation, this seems a suitable compromise for the format.
 
 Top-level bindings that are uninitialized should still be exported with undefined values to ensure they contribute the module shape.
 
@@ -228,7 +228,7 @@ export function p () {
 Could be written:
 
 ```js
-  System.register([], function($__export, $__moduleContext) {
+  PentaSystem.register([], function($__export, $__moduleContext) {
     var x;
     function p() {
       x = 10;
@@ -261,7 +261,7 @@ const { e } = await import('e',{assert: {type: 'javascript'}})
 ->
 
 ```js
-System.register(['./a.json', 'b', './a.css'], function ($__export, $__moduleContext) {
+PentaSystem.register(['./a.json', 'b', './a.css'], function ($__export, $__moduleContext) {
   var a, b, c
 
   return {

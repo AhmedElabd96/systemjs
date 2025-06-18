@@ -2,17 +2,17 @@
  * SystemJS Core
  *
  * Provides
- * - System.import
- * - System.register support for
+ * - PentaSystem.import
+ * - PentaSystem.register support for
  *     live bindings, function hoisting through circular references,
  *     reexports, dynamic import, import.meta.url, top-level await
- * - System.getRegister to get the registration
+ * - PentaSystem.getRegister to get the registration
  * - Symbol.toStringTag support in Module objects
- * - Hookable System.createContext to customize import.meta
- * - System.onload(err, id, deps) handler for tracing / hot-reloading
+ * - Hookable PentaSystem.createContext to customize import.meta
+ * - PentaSystem.onload(err, id, deps) handler for tracing / hot-reloading
  *
- * Core comes with no System.prototype.resolve or
- * System.prototype.instantiate implementations
+ * Core comes with no PentaSystem.prototype.resolve or
+ * PentaSystem.prototype.instantiate implementations
  */
 import { global, hasSymbol } from './common.js';
 import { errMsg } from './err-msg.js';
@@ -69,7 +69,7 @@ systemJSPrototype.register = function (deps, declare, metas) {
 };
 
 /*
- * getRegister provides the last anonymous System.register call
+ * getRegister provides the last anonymous PentaSystem.register call
  */
 systemJSPrototype.getRegister = function () {
   var _lastRegister = lastRegister;
@@ -318,4 +318,4 @@ function postOrderExec (loader, load, seen) {
   }
 }
 
-global.System = new SystemJS();
+global.PentaSystem = new SystemJS();

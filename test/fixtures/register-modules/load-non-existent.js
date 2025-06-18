@@ -1,4 +1,4 @@
-System.register(["./non-existent.js"], function (_export, _context) {
+PentaSystem.register(["./non-existent.js"], function (_export, _context) {
   "use strict";
 
   return {

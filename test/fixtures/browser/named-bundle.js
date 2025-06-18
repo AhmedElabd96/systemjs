@@ -1,4 +1,4 @@
-System.register('a', ['b'], function (exports) {
+PentaSystem.register('a', ['b'], function (exports) {
   var b;
   return {
     setters: [function (m) {
@@ -12,7 +12,7 @@ System.register('a', ['b'], function (exports) {
   };
 });
 
-System.register('b', [], function (exports) {
+PentaSystem.register('b', [], function (exports) {
   return {
     execute: function () {
       exports({

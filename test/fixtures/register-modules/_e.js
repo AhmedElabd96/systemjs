@@ -1,4 +1,4 @@
-System.register(["./_c.js"], function (_export, _context) {
+PentaSystem.register(["./_c.js"], function (_export, _context) {
   "use strict";
 
   var e;

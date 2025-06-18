@@ -1451,10 +1451,6 @@ function getNodeRequestOptions(request) {
 		agent = agent(parsedURL);
 	}
 
-	if (!headers.has('Connection') && !agent) {
-		headers.set('Connection', 'close');
-	}
-
 	// HTTP-network fetch step 4.2
 	// chunked encoding is handled by Node.js
 
@@ -1504,6 +1500,20 @@ const isDomainOrSubdomain = function isDomainOrSubdomain(destination, original) 
 };
 
 /**
+ * isSameProtocol reports whether the two provided URLs use the same protocol.
+ *
+ * Both domains must already be in canonical form.
+ * @param {string|URL} original
+ * @param {string|URL} destination
+ */
+const isSameProtocol = function isSameProtocol(destination, original) {
+	const orig = new URL$1(original).protocol;
+	const dest = new URL$1(destination).protocol;
+
+	return orig === dest;
+};
+
+/**
  * Fetch function
  *
  * @param   Mixed    url   Absolute url or Request instance
@@ -1534,7 +1544,7 @@ function fetch(url, opts) {
 			let error = new AbortError('The user aborted a request.');
 			reject(error);
 			if (request.body && request.body instanceof Stream.Readable) {
-				request.body.destroy(error);
+				destroyStream(request.body, error);
 			}
 			if (!response || !response.body) return;
 			response.body.emit('error', error);
@@ -1575,8 +1585,42 @@ function fetch(url, opts) {
 
 		req.on('error', function (err) {
 			reject(new FetchError(`request to ${request.url} failed, reason: ${err.message}`, 'system', err));
+
+			if (response && response.body) {
+				destroyStream(response.body, err);
+			}
+
 			finalize();
 		});
+
+		fixResponseChunkedTransferBadEnding(req, function (err) {
+			if (signal && signal.aborted) {
+				return;
+			}
+
+			if (response && response.body) {
+				destroyStream(response.body, err);
+			}
+		});
+
+		/* c8 ignore next 18 */
+		if (parseInt(process.version.substring(1)) < 14) {
+			// Before Node.js 14, pipeline() does not fully support async iterators and does not always
+			// properly handle when the socket close/end events are out of order.
+			req.on('socket', function (s) {
+				s.addListener('close', function (hadError) {
+					// if a data listener is still present we didn't end cleanly
+					const hasDataListener = s.listenerCount('data') > 0;
+
+					// if end happened before close but the socket didn't emit an error, do it now
+					if (response && hasDataListener && !hadError && !(signal && signal.aborted)) {
+						const err = new Error('Premature close');
+						err.code = 'ERR_STREAM_PREMATURE_CLOSE';
+						response.body.emit('error', err);
+					}
+				});
+			});
+		}
 
 		req.on('response', function (res) {
 			clearTimeout(reqTimeout);
@@ -1649,7 +1693,7 @@ function fetch(url, opts) {
 							size: request.size
 						};
 
-						if (!isDomainOrSubdomain(request.url, locationURL)) {
+						if (!isDomainOrSubdomain(request.url, locationURL) || !isSameProtocol(request.url, locationURL)) {
 							for (const name of ['authorization', 'www-authenticate', 'cookie', 'cookie2']) {
 								requestOpts.headers.delete(name);
 							}
@@ -1742,6 +1786,13 @@ function fetch(url, opts) {
 					response = new Response(body, response_options);
 					resolve(response);
 				});
+				raw.on('end', function () {
+					// some old IIS servers return zero-length OK deflate responses, so 'data' is never emitted.
+					if (!response) {
+						response = new Response(body, response_options);
+						resolve(response);
+					}
+				});
 				return;
 			}
 
@@ -1761,6 +1812,44 @@ function fetch(url, opts) {
 		writeToStream(req, request);
 	});
 }
+function fixResponseChunkedTransferBadEnding(request, errorCallback) {
+	let socket;
+
+	request.on('socket', function (s) {
+		socket = s;
+	});
+
+	request.on('response', function (response) {
+		const headers = response.headers;
+
+		if (headers['transfer-encoding'] === 'chunked' && !headers['content-length']) {
+			response.once('close', function (hadError) {
+				// tests for socket presence, as in some situations the
+				// the 'socket' event is not triggered for the request
+				// (happens in deno), avoids `TypeError`
+				// if a data listener is still present we didn't end cleanly
+				const hasDataListener = socket && socket.listenerCount('data') > 0;
+
+				if (hasDataListener && !hadError) {
+					const err = new Error('Premature close');
+					err.code = 'ERR_STREAM_PREMATURE_CLOSE';
+					errorCallback(err);
+				}
+			});
+		}
+	});
+}
+
+function destroyStream(stream, err) {
+	if (stream.destroy) {
+		stream.destroy(err);
+	} else {
+		// node < 8
+		stream.emit('error', err);
+		stream.end();
+	}
+}
+
 /**
  * Redirect code matching
  *
@@ -1781,6 +1870,7 @@ exports.Headers = Headers;
 exports.Request = Request;
 exports.Response = Response;
 exports.FetchError = FetchError;
+exports.AbortError = AbortError;
 
 
 /***/ }),
@@ -7937,7 +8027,7 @@ __nccwpck_require__.r(__webpack_exports__);
 
 // EXPORTS
 __nccwpck_require__.d(__webpack_exports__, {
-  "System": () => (/* binding */ system_node_System),
+  "PentaSystem": () => (/* binding */ system_node_PentaSystem),
   "applyImportMap": () => (/* binding */ applyImportMap),
   "setBaseUrl": () => (/* binding */ setBaseUrl)
 });
@@ -8161,17 +8251,17 @@ function resolveImportMap (importMap, resolvedOrPlain, parentUrl) {
  * SystemJS Core
  *
  * Provides
- * - System.import
- * - System.register support for
+ * - PentaSystem.import
+ * - PentaSystem.register support for
  *     live bindings, function hoisting through circular references,
  *     reexports, dynamic import, import.meta.url, top-level await
- * - System.getRegister to get the registration
+ * - PentaSystem.getRegister to get the registration
  * - Symbol.toStringTag support in Module objects
- * - Hookable System.createContext to customize import.meta
- * - System.onload(err, id, deps) handler for tracing / hot-reloading
+ * - Hookable PentaSystem.createContext to customize import.meta
+ * - PentaSystem.onload(err, id, deps) handler for tracing / hot-reloading
  *
- * Core comes with no System.prototype.resolve or
- * System.prototype.instantiate implementations
+ * Core comes with no PentaSystem.prototype.resolve or
+ * PentaSystem.prototype.instantiate implementations
  */
 
 
@@ -8228,7 +8318,7 @@ systemJSPrototype.register = function (deps, declare, metas) {
 };
 
 /*
- * getRegister provides the last anonymous System.register call
+ * getRegister provides the last anonymous PentaSystem.register call
  */
 systemJSPrototype.getRegister = function () {
   var _lastRegister = lastRegister;
@@ -8477,7 +8567,7 @@ function postOrderExec (loader, load, seen) {
   }
 }
 
-envGlobal.System = new SystemJS();
+envGlobal.PentaSystem = new SystemJS();
 
 ;// CONCATENATED MODULE: ./src/features/import-maps.js
 /*
@@ -8490,7 +8580,7 @@ envGlobal.System = new SystemJS();
 var importMapPromise = Promise.resolve();
 var importMap = { imports: {}, scopes: {}, depcache: {}, integrity: {} };
 
-// Scripts are processed immediately, on the first System.import, and on DOMReady.
+// Scripts are processed immediately, on the first PentaSystem.import, and on DOMReady.
 // Import map scripts are processed only once (by being marked) and in order for each phase.
 // This is to avoid using DOM mutation observers in core, although that would be an alternative.
 var processFirst = hasDocument;
@@ -8523,7 +8613,7 @@ function processScripts () {
       script.sp = true;
       if (!script.src)
         return;
-      System.import(script.src.slice(0, 7) === 'import:' ? script.src.slice(7) : resolveUrl(script.src, baseUrl)).catch(function (e) {
+      PentaSystem.import(script.src.slice(0, 7) === 'import:' ? script.src.slice(7) : resolveUrl(script.src, baseUrl)).catch(function (e) {
         // if there is a script load error, dispatch an "error" event
         // on the script tag.
         if (e.message.indexOf('https://github.com/systemjs/systemjs/blob/main/docs/errors.md#3') > -1) {
@@ -8537,7 +8627,7 @@ function processScripts () {
     else if (script.type === 'systemjs-importmap') {
       script.sp = true;
       // The passThrough property is for letting the module types fetch implementation know that this is not a SystemJS module.
-      var fetchPromise = script.src ? (System.fetch || fetch)(script.src, { integrity: script.integrity, priority: script.fetchPriority, passThrough: true }).then(function (res) {
+      var fetchPromise = script.src ? (PentaSystem.fetch || fetch)(script.src, { integrity: script.integrity, priority: script.fetchPriority, passThrough: true }).then(function (res) {
         if (!res.ok)
           throw Error(process.env.SYSTEM_PRODUCTION ? res.status : 'Invalid status code: ' + res.status);
         return res.text();
@@ -8758,8 +8848,8 @@ var external_url_ = __nccwpck_require__(310);
 
 source_map_support.install();
 
-global.System.constructor.prototype.shouldFetch = () => true;
-global.System.constructor.prototype.fetch = async url => {
+global.PentaSystem.constructor.prototype.shouldFetch = () => true;
+global.PentaSystem.constructor.prototype.fetch = async url => {
   if (url.startsWith('file:')) {
     try {
       const source = await external_fs_.promises.readFile((0,external_url_.fileURLToPath)(url.toString()));
@@ -8801,7 +8891,7 @@ global.System.constructor.prototype.fetch = async url => {
  * (Included by default in system.js build)
  */
 (function (global) {
-  var systemJSPrototype = global.System.constructor.prototype;
+  var systemJSPrototype = global.PentaSystem.constructor.prototype;
 
   // safari unpredictably lists some new globals first or second in object order
   var firstGlobalProp, secondGlobalProp, lastGlobalProp;
@@ -8902,7 +8992,7 @@ global.System.constructor.prototype.fetch = async url => {
 
 
 
-const system_node_System = global.System;
+const system_node_PentaSystem = global.PentaSystem;
 
 const IMPORT_MAP_PROMISE = Symbol();
 

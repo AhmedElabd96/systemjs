@@ -1,4 +1,4 @@
-System.register(["./rebinding.js"], function (_export, _context) {
+PentaSystem.register(["./rebinding.js"], function (_export, _context) {
   "use strict";
 
   var p;

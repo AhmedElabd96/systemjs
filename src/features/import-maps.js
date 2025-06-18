@@ -8,7 +8,7 @@ import { errMsg } from '../err-msg.js';
 var importMapPromise = Promise.resolve();
 export var importMap = { imports: {}, scopes: {}, depcache: {}, integrity: {} };
 
-// Scripts are processed immediately, on the first System.import, and on DOMReady.
+// Scripts are processed immediately, on the first PentaSystem.import, and on DOMReady.
 // Import map scripts are processed only once (by being marked) and in order for each phase.
 // This is to avoid using DOM mutation observers in core, although that would be an alternative.
 var processFirst = hasDocument;
@@ -41,7 +41,7 @@ function processScripts () {
       script.sp = true;
       if (!script.src)
         return;
-      System.import(script.src.slice(0, 7) === 'import:' ? script.src.slice(7) : resolveUrl(script.src, baseUrl)).catch(function (e) {
+      PentaSystem.import(script.src.slice(0, 7) === 'import:' ? script.src.slice(7) : resolveUrl(script.src, baseUrl)).catch(function (e) {
         // if there is a script load error, dispatch an "error" event
         // on the script tag.
         if (e.message.indexOf('https://github.com/systemjs/systemjs/blob/main/docs/errors.md#3') > -1) {
@@ -55,7 +55,7 @@ function processScripts () {
     else if (script.type === 'systemjs-importmap') {
       script.sp = true;
       // The passThrough property is for letting the module types fetch implementation know that this is not a SystemJS module.
-      var fetchPromise = script.src ? (System.fetch || fetch)(script.src, { integrity: script.integrity, priority: script.fetchPriority, passThrough: true }).then(function (res) {
+      var fetchPromise = script.src ? (PentaSystem.fetch || fetch)(script.src, { integrity: script.integrity, priority: script.fetchPriority, passThrough: true }).then(function (res) {
         if (!res.ok)
           throw Error(process.env.SYSTEM_PRODUCTION ? res.status : 'Invalid status code: ' + res.status);
         return res.text();

@@ -1,4 +1,4 @@
-System.register(['named-register-single-execute'], function (_export) {
+PentaSystem.register(['named-register-single-execute'], function (_export) {
   let dep;
 
   return {

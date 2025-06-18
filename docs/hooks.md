@@ -7,8 +7,8 @@ The loader is designed to be hookable in a very light-weight way using only func
 The standard pattern for this is:
 
 ```js
-const existingHook = System.constructor.prototype.hookName;
-System.constructor.prototype.hookName = function (args) {
+const existingHook = PentaSystem.constructor.prototype.hookName;
+PentaSystem.constructor.prototype.hookName = function (args) {
   return Promise.resolve(existingHook.call(this, args))
   .then(function (existingHookResult) {
     // custom hook here
@@ -23,12 +23,12 @@ In addition, some hooks are Promise-based, so Promise chaining also needs to be 
 
 #### createContext(url) -> Object
 
-Used to populate the `import.meta` for a module, available at `_context.meta` in the [System.register module format](system-register.md).
+Used to populate the `import.meta` for a module, available at `_context.meta` in the [PentaSystem.register module format](system-register.md).
 
 The default implementation is:
 
 ```js
-System.constructor.prototype.createContext = function (url) {
+PentaSystem.constructor.prototype.createContext = function (url) {
   return {
     url
   };
@@ -49,21 +49,21 @@ Note that this hook does not apply to [module types](module-types.md), which use
 
 #### prepareImport() -> Promise
 
-This function is called before any `System.import` or dynamic import, returning a Promise that is resolved before continuing to perform the import.
+This function is called before any `PentaSystem.import` or dynamic import, returning a Promise that is resolved before continuing to perform the import.
 
-This is used in SystemJS core to ensure that import maps are loaded so that the `System.resolve` function remains synchronous.
+This is used in SystemJS core to ensure that import maps are loaded so that the `PentaSystem.resolve` function remains synchronous.
 
 #### instantiate(url, parentUrl) -> Promise
 
 This function downloads and executes the code for a module. The promise must resolve with a "register" array, as described in the `getRegister` documentation.
 
-The default system.js implementation is to append a script tag that downloads and executes the module's code, subsequently resolving the promise with the most recent register: `resolve(System.getRegister())`. [Example](https://github.com/systemjs/systemjs/blob/master/src/features/script-load.js).
+The default system.js implementation is to append a script tag that downloads and executes the module's code, subsequently resolving the promise with the most recent register: `resolve(PentaSystem.getRegister())`. [Example](https://github.com/systemjs/systemjs/blob/master/src/features/script-load.js).
 
 #### getRegister(url) -> [deps: String[], declare: Function]
 
 > This hook is intended for custom module format integrations only.
 
-This function stores the last call to `System.register`, and is the companion hook for that function.
+This function stores the last call to `PentaSystem.register`, and is the companion hook for that function.
 
 It is important that this function is synchronous, as any event loop delay would result in uncertainty over which source evaluation
 resulted in this registration call.
@@ -86,14 +86,14 @@ so that it can support these types through the fetch hook.
 Setting:
 
 ```js
-System.shouldFetch = function () { return true; };
+PentaSystem.shouldFetch = function () { return true; };
 ```
 
 will enforce loading all JS files through `fetch`, allowing custom fetch hook implementation behaviours.
 
 #### fetch(url, options) -> Promise<Response>
 
-The default fetch implementation used in SystemJS is simply `System.fetch = window.fetch`, which can be further hooked to enable
+The default fetch implementation used in SystemJS is simply `PentaSystem.fetch = window.fetch`, which can be further hooked to enable
 arbitrary transformation.
 
 For an example of how to hook this behaviour, see the [module types extra source code](../src/extras/module-types.js).
@@ -110,4 +110,4 @@ For tracing functionality this is called on completion or failure of each and ev
 
 `isErrSource` is used to indicate if `id` is the error source or not.
 
-Such tracing can be used for analysis and to clear the loader registry using the `System.delete(url)` API to enable reloading and hot reloading workflows.
+Such tracing can be used for analysis and to clear the loader registry using the `PentaSystem.delete(url)` API to enable reloading and hot reloading workflows.

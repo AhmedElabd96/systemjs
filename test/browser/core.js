@@ -3,7 +3,7 @@ suite('SystemJS Standard Tests', function() {
   test('Syntax errors', function () {
     // mocha must ignore script errors as uncaught
 		window.onerror = undefined;
-    return System.import('fixtures/error-loader.js').then(function () {
+    return PentaSystem.import('fixtures/error-loader.js').then(function () {
       assert.fail('Should fail');
     }, function (e) {
       assert.ok(e);
@@ -12,7 +12,7 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('Fetch errors', function () {
-    return System.import('fixtures/error-loader2.js').then(function () {
+    return PentaSystem.import('fixtures/error-loader2.js').then(function () {
       assert.fail('Should fail');
     }, function (e) {
       assert.ok(e);
@@ -24,7 +24,7 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('String encoding', function () {
-    return System.import('fixtures/string-encoding.js').then(function (m) {
+    return PentaSystem.import('fixtures/string-encoding.js').then(function (m) {
       assert.equal(m.pi, decodeURI('%CF%80'));
       assert.equal(m.emoji, decodeURI('%F0%9F%90%B6'));
     });
@@ -32,20 +32,20 @@ suite('SystemJS Standard Tests', function() {
 
 
   test('Import full URL', function () {
-    return System.import(window.location.href.substr(0, window.location.href.lastIndexOf('/')) + '/fixtures/browser/string-encoding.js').then(function () {
+    return PentaSystem.import(window.location.href.substr(0, window.location.href.lastIndexOf('/')) + '/fixtures/browser/string-encoding.js').then(function () {
       assert.ok(true);
     });
   });
 
   test('Package maps', function () {
     return Promise.all([
-      System.resolve('a'),
-      System.resolve('f'),
-      System.resolve('a/b'),
-      System.resolve('b/c'),
-      System.resolve('b.js'),
-      System.resolve('b.js/c'),
-      System.resolve('g/x')
+      PentaSystem.resolve('a'),
+      PentaSystem.resolve('f'),
+      PentaSystem.resolve('a/b'),
+      PentaSystem.resolve('b/c'),
+      PentaSystem.resolve('b.js'),
+      PentaSystem.resolve('b.js/c'),
+      PentaSystem.resolve('g/x')
     ]).then(function (a) {
       assert.equal(a[0], rootURL + 'b');
       assert.equal(a[1], 'a:');
@@ -58,7 +58,7 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('import.meta.resolve package maps', function () {
-    return System.import('fixtures/resolve.js').then(function (m) {
+    return PentaSystem.import('fixtures/resolve.js').then(function (m) {
       return m.resolve('a')
     })
     .then(function (resolved) {
@@ -67,7 +67,7 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('import.meta.resolve package maps paths', function () {
-    return System.import('fixtures/resolve.js').then(function (m) {
+    return PentaSystem.import('fixtures/resolve.js').then(function (m) {
       return m.resolve('a/')
     })
     .then(function (resolved) {
@@ -76,14 +76,14 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('Contextual package maps', function () {
-    return System.import('fixtures/scope-test/index.js')
+    return PentaSystem.import('fixtures/scope-test/index.js')
     .then(function (m) {
       assert.equal(m.mapdep, 'mapdep');
     });
   });
 
   test('import.meta.resolve contextual package maps', function () {
-    return System.import('fixtures/resolve.js').then(function (m) {
+    return PentaSystem.import('fixtures/resolve.js').then(function (m) {
       return m.resolve('maptest', baseURL + 'fixtures/browser/scope-test/index.js')
     })
     .then(function (resolved) {
@@ -92,7 +92,7 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('import.meta.resolve contextual package maps fail', function () {
-    return System.import('fixtures/resolve.js').then(function (m) {
+    return PentaSystem.import('fixtures/resolve.js').then(function (m) {
       return m.resolve('maptest')
     })
     .then(function (resolved) {
@@ -102,8 +102,8 @@ suite('SystemJS Standard Tests', function() {
     });
   });
 
-  test('Loading named System.register fails', function () {
-    return System.import('fixtures/named-register.js')
+  test('Loading named PentaSystem.register fails', function () {
+    return PentaSystem.import('fixtures/named-register.js')
     .then(function () {
       assert.fail('Should fail');
     })
@@ -113,16 +113,16 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('Global script loading', function () {
-    return System.import('fixtures/global.js').then(function (m) {
+    return PentaSystem.import('fixtures/global.js').then(function (m) {
       assert.ok(m.default);
       assert.equal(m.default.some, 'thing');
     });
   });
 
   test('firstGlobalProp option', function () {
-    Object.getPrototypeOf(System).firstGlobalProp = true;
-    return System.import('fixtures/multiple-globals.js').then(function (m) {
-      delete Object.getPrototypeOf(System).firstGlobalProp;
+    Object.getPrototypeOf(PentaSystem).firstGlobalProp = true;
+    return PentaSystem.import('fixtures/multiple-globals.js').then(function (m) {
+      delete Object.getPrototypeOf(PentaSystem).firstGlobalProp;
       assert.ok(m.default);
       assert.equal(m.default.foo1, 'foo1');
     });
@@ -134,7 +134,7 @@ suite('SystemJS Standard Tests', function() {
       scriptsToLoad.push('fixtures/globals/import' + i + '.js');
 
     return Promise.all(scriptsToLoad.map(function (s, index) {
-      return System.import(s).then(function (m) {
+      return PentaSystem.import(s).then(function (m) {
         assert.equal(m.default, index + 1);
       });
     }));
@@ -143,7 +143,7 @@ suite('SystemJS Standard Tests', function() {
   test('Catches global script errors', function () {
     // mocha must ignore script errors as uncaught
 		window.onerror = undefined;
-    return System.import('fixtures/eval-err.js').then(function () {
+    return PentaSystem.import('fixtures/eval-err.js').then(function () {
       assert.fail('Should fail');
     }, function (e) {
       assert.ok(e);
@@ -152,7 +152,7 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('Contextual dynamic import', function () {
-    return System.import('fixtures/dynamic-import-register.js').then(function (m) {
+    return PentaSystem.import('fixtures/dynamic-import-register.js').then(function (m) {
       return m.lazy();
     })
     .then(function (lazyValue) {
@@ -161,17 +161,17 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('JSON modules', function () {
-    return System.import('fixtures/json.json').then(function (m) {
+    return PentaSystem.import('fixtures/json.json').then(function (m) {
       assert.equal(m.default.json, 'module');
     })
     .then(function () {
-      return System.import('fixtures/json-error.json');
+      return PentaSystem.import('fixtures/json-error.json');
     })
     .catch(function (err) {
       assert.ok(err instanceof SyntaxError);
     })
     .then(function () {
-      return System.import('fixtures/json-error.json');
+      return PentaSystem.import('fixtures/json-error.json');
     })
     .catch(function (err) {
       assert.ok(err instanceof SyntaxError);
@@ -179,12 +179,12 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('Errors for bad Content-Type headers', function () {
-    return System.import('fixtures/content-type-none.json')
+    return PentaSystem.import('fixtures/content-type-none.json')
     .catch(function (err) {
       assert.ok(/Unknown Content-Type.*error#4/i.test(err));
     })
     .then(function () {
-      return System.import('fixtures/content-type-xml.json')
+      return PentaSystem.import('fixtures/content-type-xml.json')
     })
     .catch(function (err) {
       assert.ok(/Unknown Content-Type.*error#4/i.test(err));
@@ -205,7 +205,7 @@ suite('SystemJS Standard Tests', function() {
 
   if (typeof WebAssembly !== 'undefined' && typeof process === 'undefined')
   test('Loading WASM', function () {
-    return System.import('fixtures/wasm/example.wasm')
+    return PentaSystem.import('fixtures/wasm/example.wasm')
     .then(function (m) {
       assert.equal(m.exampleExport(1), 2);
     });
@@ -213,14 +213,14 @@ suite('SystemJS Standard Tests', function() {
 
   if (typeof WebAssembly !== 'undefined' && typeof process === 'undefined')
   test('Loading WASM over 4KB limit', function () {
-    return System.import('fixtures/wasm/addbloated.wasm')
+    return PentaSystem.import('fixtures/wasm/addbloated.wasm')
     .then(function (m) {
       assert.equal(m.addTwo(1, 1), 2);
     });
   });
 
   test('should load a css module', function () {
-    return System.import('fixturesbase/css-modules/a.css').then(function (m) {
+    return PentaSystem.import('fixturesbase/css-modules/a.css').then(function (m) {
       assert.ok(m);
       assert.ok(isCSSStyleSheet(m.default));
       document.adoptedStyleSheets = document.adoptedStyleSheets.concat(m.default);
@@ -228,7 +228,7 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('should handle css modules with urls without quotes', function () {
-    return System.import('fixturesbase/css-modules/url-without-quotes.css').then(function (m) {
+    return PentaSystem.import('fixturesbase/css-modules/url-without-quotes.css').then(function (m) {
       assert.ok(m);
       assert.ok(isCSSStyleSheet(m.default));
       assert.equal(m.default.cssRules[0].cssText,'.hello { background-image: url("http://localhost:8080/test/fixtures/css-modules/path/to/image.png"); }')
@@ -239,14 +239,14 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('should support application/javascript css module override', function () {
-    return System.import('fixturesbase/css-modules/javascript.css').then(function (m) {
+    return PentaSystem.import('fixturesbase/css-modules/javascript.css').then(function (m) {
       assert.ok(m);
       assert.ok(m.css, 'module');
     });
   });
 
   test('should throw when trying to load an HTML module', function () {
-    return System.import('/test/test.html').then(function () {
+    return PentaSystem.import('/test/test.html').then(function () {
       throw Error("Loading html modules isn't implemented, but attempting to do so didn't throw an Error");
     }, function (err) {
       assert.ok(err);
@@ -254,31 +254,31 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('should load <script type=systemjs-module>', function () {
-    const resolved = System.resolve('/test/fixtures/browser/systemjs-module-script.js');
-    assert.ok(System.has(resolved));
-    assert.equal(System.get(resolved).foo, 'bar');
+    const resolved = PentaSystem.resolve('/test/fixtures/browser/systemjs-module-script.js');
+    assert.ok(PentaSystem.has(resolved));
+    assert.equal(PentaSystem.get(resolved).foo, 'bar');
   });
 
   test('should remove import: prefix from <script type=systemjs-module>', function () {
-    const resolved = System.resolve('/test/fixtures/browser/systemjs-module-script2.js');
-    assert.ok(System.has(resolved));
-    assert.equal(System.get(resolved).hello, 'there');
+    const resolved = PentaSystem.resolve('/test/fixtures/browser/systemjs-module-script2.js');
+    assert.ok(PentaSystem.has(resolved));
+    assert.equal(PentaSystem.get(resolved).hello, 'there');
   });
 
   test('should load <script type=systemjs-module> that is in the dom before systemjs is loaded', function () {
-    const resolved = System.resolve('/test/fixtures/browser/systemjs-module-early.js');
-    assert.ok(System.has(resolved));
-    assert.equal(System.get(resolved).hi, 'bye');
+    const resolved = PentaSystem.resolve('/test/fixtures/browser/systemjs-module-early.js');
+    assert.ok(PentaSystem.has(resolved));
+    assert.equal(PentaSystem.get(resolved).hi, 'bye');
   });
 
   test('should load auto import', function () {
-    const resolved = System.resolve('/test/fixtures/browser/auto-import.js');
-    assert.ok(System.has(resolved));
-    assert.equal(System.get(resolved).auto, 'import');
+    const resolved = PentaSystem.resolve('/test/fixtures/browser/auto-import.js');
+    assert.ok(PentaSystem.has(resolved));
+    assert.equal(PentaSystem.get(resolved).auto, 'import');
   });
 
   test('import.meta.resolve', function () {
-    return System.import('fixtures/resolve.js').then(function (m) {
+    return PentaSystem.import('fixtures/resolve.js').then(function (m) {
       return m.resolve('./test.js')
     })
     .then(function (resolved) {
@@ -287,28 +287,28 @@ suite('SystemJS Standard Tests', function() {
   });
 
   test('non-enumerable __esModule property export (issue 2090)', function () {
-    return System.import('fixtures/__esModule.js').then(function (m) {
+    return PentaSystem.import('fixtures/__esModule.js').then(function (m) {
       // Even though __esModule is not enumerable on the exported object, it should be preserved on the systemjs namespace
       assert.ok(m.__esModule);
     });
   });
 
   test('should support depcache', function () {
-    return System.import('/test/fixtures/browser/depcache.js').then(function (m) {
+    return PentaSystem.import('/test/fixtures/browser/depcache.js').then(function (m) {
       assert.ok(m);
       assert.equal(m.default, '10th module');
     });
   });
 
   test('should not get confused by filenames in url hash when resolving module type', function () {
-    return System.import('fixturesbase/css-modules/hash.css?foo=bar.html').then(function (m) {
+    return PentaSystem.import('fixturesbase/css-modules/hash.css?foo=bar.html').then(function (m) {
       assert.ok(m);
       assert.ok(isCSSStyleSheet(m.default));
     });
   });
 
   test('should not get confused by filenames in search params hash when resolving module type', function () {
-    return System.import('fixturesbase/css-modules/search-param.css?param=foo.html').then(function (m) {
+    return PentaSystem.import('fixturesbase/css-modules/search-param.css?param=foo.html').then(function (m) {
       assert.ok(m);
       assert.ok(isCSSStyleSheet(m.default));
     });
@@ -316,15 +316,15 @@ suite('SystemJS Standard Tests', function() {
 
   // https://github.com/systemjs/systemjs/issues/2286
   test('should allow deletion of modules that failed to instantiate', function () {
-    return System.import('fixtures/link-error.js').then(
+    return PentaSystem.import('fixtures/link-error.js').then(
       function () {
         throw Error('Link error expected');
       },
       function () {
-        assert.ok(System.delete(System.resolve('fixtures/link-error.js')));
-        assert.ok(System.delete(System.resolve('fixtures/link-error-child.js')));
-        assert.ok(System.delete(System.resolve('fixtures/not-found.js')));
-        assert.ok(System.delete(System.resolve('fixtures/link-error-child2.js')));
+        assert.ok(PentaSystem.delete(PentaSystem.resolve('fixtures/link-error.js')));
+        assert.ok(PentaSystem.delete(PentaSystem.resolve('fixtures/link-error-child.js')));
+        assert.ok(PentaSystem.delete(PentaSystem.resolve('fixtures/not-found.js')));
+        assert.ok(PentaSystem.delete(PentaSystem.resolve('fixtures/link-error-child2.js')));
       }
     );
   });
@@ -336,11 +336,11 @@ suite('SystemJS Standard Tests', function() {
     scriptElement.src = importMapSrc;
     document.head.appendChild(scriptElement);
 
-    const originalFetch = System.constructor.prototype.fetch;
+    const originalFetch = PentaSystem.constructor.prototype.fetch;
 
     let fetchHookCalled = false;
 
-    System.constructor.prototype.fetch = function(url) {
+    PentaSystem.constructor.prototype.fetch = function(url) {
       if (url === importMapSrc) {
         fetchHookCalled = true;
       }
@@ -349,9 +349,9 @@ suite('SystemJS Standard Tests', function() {
     }
 
     // Reprocess import maps
-    System.prepareImport(true);
+    PentaSystem.prepareImport(true);
 
-    System.constructor.prototype.fetch = originalFetch;
+    PentaSystem.constructor.prototype.fetch = originalFetch;
 
     assert.ok(fetchHookCalled);
   });

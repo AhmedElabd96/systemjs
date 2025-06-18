@@ -1,4 +1,4 @@
-System.register([], function (_export) {
+PentaSystem.register([], function (_export) {
   var reporter;
 
   var state = 0;

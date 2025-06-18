@@ -1,3 +1,3 @@
-System.register('asdf', [], function () {
+PentaSystem.register('asdf', [], function () {
 
 });

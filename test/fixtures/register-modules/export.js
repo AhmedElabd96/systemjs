@@ -1,4 +1,4 @@
-System.register([], function (_export, _context) {
+PentaSystem.register([], function (_export, _context) {
   "use strict";
 
   var p, q, s;

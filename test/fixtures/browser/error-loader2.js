@@ -1,3 +1,3 @@
-System.register(['./non-existent'], function () {
+PentaSystem.register(['./non-existent'], function () {
   return {};
 });

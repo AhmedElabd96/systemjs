@@ -20,7 +20,7 @@ SystemJS 6.10.1
 
 SystemJS 6.10.0
 * Add package.json to package exports (https://github.com/systemjs/systemjs/pull/2317 @mk-pmb)
-* Refactor amd.js to only call System.register. Resolves #2331. (#2335)
+* Refactor amd.js to only call PentaSystem.register. Resolves #2331. (#2335)
 * Do not throw errors when _export(null) is called. Resolves #2332. (#2334)
 
 SystemJS 6.9.0
@@ -38,11 +38,11 @@ SystemJS 6.8.2
 * Footprint improvement for browser (https://github.com/systemjs/systemjs/pull/2290)
 
 SystemJS 6.8.1
-* Support System.firstGlobalProp on System instance (https://github.com/systemjs/systemjs/commit/4883c708280f1a7785f065b46852fa806938a2dc)
+* Support PentaSystem.firstGlobalProp on PentaSystem instance (https://github.com/systemjs/systemjs/commit/4883c708280f1a7785f065b46852fa806938a2dc)
 * Webpack usage update (https://github.com/systemjs/systemjs/commit/ca781b854fbb253e5f8477ce9b4fbc8c3c43f03c)
 
 SystemJS 6.8.0
-* System.firstGlobalProp for global loading extra (https://github.com/systemjs/systemjs/commit/48351aa83c48fdd22b63000d417dedc2329f2340, @joeldenning)
+* PentaSystem.firstGlobalProp for global loading extra (https://github.com/systemjs/systemjs/commit/48351aa83c48fdd22b63000d417dedc2329f2340, @joeldenning)
 * Graceful import map loading errors (https://github.com/systemjs/systemjs/commit/9edebd1969842dcc95a12d4137677c6bc9fe2bae, @naltatis)
 * Sourcemap normalization for fetch loader (https://github.com/systemjs/systemjs/commit/97621d724cc7c892d9dee2cff6b27553326c8169)
 * Dispatch script loading errors for `<script type="systemjs-module">` (https://github.com/systemjs/systemjs/commit/f0fe5a473414b995082688c30a876c602e32d901, @dmail)
@@ -107,7 +107,7 @@ SystemJS 6.3.0
 * New system-node.cjs loader designed to run in NodeJS. (https://github.com/systemjs/systemjs/pull/2150, https://github.com/systemjs/systemjs/pull/2158)
 * SystemJS now has error codes, along with documentation for each error code (https://github.com/systemjs/systemjs/pull/2151)
 * Fix bug in Chrome 45 where const/let disallowed unless in strict mode (https://github.com/systemjs/systemjs/pull/2162)
-* Add warning for calling System.set with non-URL id (https://github.com/systemjs/systemjs/pull/2161)
+* Add warning for calling PentaSystem.set with non-URL id (https://github.com/systemjs/systemjs/pull/2161)
 
 SystemJS 6.2.6
 * Address race condition with named register modules (https://github.com/systemjs/systemjs/pull/2144)
@@ -116,7 +116,7 @@ SystemJS 6.2.5
 * Fix problem where a falsy exported value from AMD modules didn't work (https://github.com/systemjs/systemjs/pull/2130)
 
 SystemJS 6.2.4
-* Fix problem where System.delete did not remove named register modules. (https://github.com/systemjs/systemjs/pull/2125 @k-j-kim)
+* Fix problem where PentaSystem.delete did not remove named register modules. (https://github.com/systemjs/systemjs/pull/2125 @k-j-kim)
 
 SystemJS 6.2.3
 * Fix another race condition with named registers. (https://github.com/systemjs/systemjs/pull/2121)
@@ -159,7 +159,7 @@ SystemJS 6.1.4 (2019/10/12)
 SystemJS 6.1.3 (2019/10/06)
 * Fix relative resolution of LHS URLs in import maps (https://github.com/systemjs/systemjs/pull/2039)
 * Fix named register extra to extend rather than reinstantiate the SystemJS instance (https://github.com/systemjs/systemjs/pull/2042)
-* Update extras to extend the global System instance explicitly (https://github.com/systemjs/systemjs/pull/2043)
+* Update extras to extend the global PentaSystem instance explicitly (https://github.com/systemjs/systemjs/pull/2043)
 
 SystemJS 6.1.2 (2019/09/22)
 * Bug fix for named AMD modules (https://github.com/systemjs/systemjs/pull/2029)
@@ -177,8 +177,8 @@ SystemJS 6.1.0 (2019/09/11) - Minor Changes
 * New module types extra for CSS, JSON and Wasm (https://github.com/systemjs/systemjs/pull/2006)
 * CSS modules implementation (https://github.com/systemjs/systemjs/pull/1997)
 * Deps argument added to onload hook (https://github.com/systemjs/systemjs/pull/1998)
-* System.resolve is now synchronous by default (https://github.com/systemjs/systemjs/pull/1996, @joeldenning)
-* The first named System.regiser in a bundle will now define the bundle module itself (https://github.com/systemjs/systemjs/pull/1984, @joeldenning)
+* PentaSystem.resolve is now synchronous by default (https://github.com/systemjs/systemjs/pull/1996, @joeldenning)
+* The first named PentaSystem.regiser in a bundle will now define the bundle module itself (https://github.com/systemjs/systemjs/pull/1984, @joeldenning)
 * Named exports extra fix not to alter the default export (https://github.com/systemjs/systemjs/pull/1983, @joeldenning)
 
 **SystemJS 5.0.0 (2019/07/30) - Major Change**
@@ -197,7 +197,7 @@ SystemJS 4.0.2 (2019/07/08)
 
 SystemJS 4.0.1 (2019/07/06)
 * Fix IE11 regression related to loading json files (https://github.com/systemjs/systemjs/pull/1963, @joeldenning)
-* Fix bug where System.import() rejected incorrectly, due to unrelated errors (https://github.com/systemjs/systemjs/pull/1961 @joeldenning)
+* Fix bug where PentaSystem.import() rejected incorrectly, due to unrelated errors (https://github.com/systemjs/systemjs/pull/1961 @joeldenning)
 
 **SystemJS 4.0.0 (2019/06/29) - Major Changes**
 * Support `<base href>` setting baseURL (https://github.com/systemjs/systemjs/pull/1957, @LarsDenBakker)

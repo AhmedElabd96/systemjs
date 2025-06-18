@@ -1,4 +1,4 @@
-System.register(['./not-found.js'], function () {
+PentaSystem.register(['./not-found.js'], function () {
   return {
     execute: function () {
     }

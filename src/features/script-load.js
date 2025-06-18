@@ -40,7 +40,7 @@ systemJSPrototype.register = function (deps, declare) {
     if (lastScript) {
       lastAutoImportUrl = lastScript.src;
       lastAutoImportDeps = deps;
-      // if this is already a System load, then the instantiate has already begun
+      // if this is already a PentaSystem load, then the instantiate has already begun
       // so this re-import has no consequence
       var loader = this;
       lastAutoImportTimeout = setTimeout(function () {

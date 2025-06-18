@@ -1,6 +1,6 @@
 let instantiateCount = 0;
 
-System.register("named-instantiate-count", [], function (_export) {
+PentaSystem.register("named-instantiate-count", [], function (_export) {
   instantiateCount++;
   return {
     execute: function () {

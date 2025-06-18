@@ -19,12 +19,12 @@ const appendImportMap = function (moduleId, src) {
 
 const importAfterImportMap = function (id) {
   return new Promise(function (resolve) { setTimeout(resolve, 10); }).then(function () {
-    return System.import(id);
+    return PentaSystem.import(id);
   });
 };
 
 const importNonExistent = function (id) {
-  return System.import(id)
+  return PentaSystem.import(id)
   .catch(function (err) { return err })
   .then(function (result) {
     if (!(result instanceof Error)) {
@@ -37,7 +37,7 @@ let container;
 
 suite('Dynamic import maps', function () {
   suiteSetup(function () {
-    return System.import('../../dist/extras/dynamic-import-maps.js')
+    return PentaSystem.import('../../dist/extras/dynamic-import-maps.js')
   });
 
   setup(function () {
@@ -72,7 +72,7 @@ suite('Dynamic import maps', function () {
     const moduleId = 'manual-map-1';
     return importNonExistent(moduleId)
     .then(function () {
-      System.addImportMap({
+      PentaSystem.addImportMap({
         "imports": {
           [moduleId]: "./fixtures/browser/esm.js"
         }

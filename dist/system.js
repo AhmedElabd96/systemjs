@@ -198,17 +198,17 @@
    * SystemJS Core
    *
    * Provides
-   * - System.import
-   * - System.register support for
+   * - PentaSystem.import
+   * - PentaSystem.register support for
    *     live bindings, function hoisting through circular references,
    *     reexports, dynamic import, import.meta.url, top-level await
-   * - System.getRegister to get the registration
+   * - PentaSystem.getRegister to get the registration
    * - Symbol.toStringTag support in Module objects
-   * - Hookable System.createContext to customize import.meta
-   * - System.onload(err, id, deps) handler for tracing / hot-reloading
+   * - Hookable PentaSystem.createContext to customize import.meta
+   * - PentaSystem.onload(err, id, deps) handler for tracing / hot-reloading
    *
-   * Core comes with no System.prototype.resolve or
-   * System.prototype.instantiate implementations
+   * Core comes with no PentaSystem.prototype.resolve or
+   * PentaSystem.prototype.instantiate implementations
    */
 
   var toStringTag$1 = hasSymbol && Symbol.toStringTag;
@@ -261,7 +261,7 @@
   };
 
   /*
-   * getRegister provides the last anonymous System.register call
+   * getRegister provides the last anonymous PentaSystem.register call
    */
   systemJSPrototype.getRegister = function () {
     var _lastRegister = lastRegister;
@@ -508,7 +508,7 @@
     }
   }
 
-  envGlobal.System = new SystemJS();
+  envGlobal.PentaSystem = new SystemJS();
 
   /*
    * SystemJS browser attachments for script and import map processing
@@ -517,7 +517,7 @@
   var importMapPromise = Promise.resolve();
   var importMap = { imports: {}, scopes: {}, depcache: {}, integrity: {} };
 
-  // Scripts are processed immediately, on the first System.import, and on DOMReady.
+  // Scripts are processed immediately, on the first PentaSystem.import, and on DOMReady.
   // Import map scripts are processed only once (by being marked) and in order for each phase.
   // This is to avoid using DOM mutation observers in core, although that would be an alternative.
   var processFirst = hasDocument;
@@ -550,7 +550,7 @@
         script.sp = true;
         if (!script.src)
           return;
-        System.import(script.src.slice(0, 7) === 'import:' ? script.src.slice(7) : resolveUrl(script.src, baseUrl)).catch(function (e) {
+        PentaSystem.import(script.src.slice(0, 7) === 'import:' ? script.src.slice(7) : resolveUrl(script.src, baseUrl)).catch(function (e) {
           // if there is a script load error, dispatch an "error" event
           // on the script tag.
           if (e.message.indexOf('https://github.com/systemjs/systemjs/blob/main/docs/errors.md#3') > -1) {
@@ -564,7 +564,7 @@
       else if (script.type === 'systemjs-importmap') {
         script.sp = true;
         // The passThrough property is for letting the module types fetch implementation know that this is not a SystemJS module.
-        var fetchPromise = script.src ? (System.fetch || fetch)(script.src, { integrity: script.integrity, priority: script.fetchPriority, passThrough: true }).then(function (res) {
+        var fetchPromise = script.src ? (PentaSystem.fetch || fetch)(script.src, { integrity: script.integrity, priority: script.fetchPriority, passThrough: true }).then(function (res) {
           if (!res.ok)
             throw Error('Invalid status code: ' + res.status);
           return res.text();
@@ -633,7 +633,7 @@
       if (lastScript) {
         lastScript.src;
         lastAutoImportDeps = deps;
-        // if this is already a System load, then the instantiate has already begun
+        // if this is already a PentaSystem load, then the instantiate has already begun
         // so this re-import has no consequence
         var loader = this;
         lastAutoImportTimeout = setTimeout(function () {
@@ -736,7 +736,7 @@
   };
 
   /*
-   * Supports loading System.register in workers
+   * Supports loading PentaSystem.register in workers
    */
 
   if (hasSelf && typeof importScripts === 'function')
@@ -754,7 +754,7 @@
    * (Included by default in system.js build)
    */
   (function (global) {
-    var systemJSPrototype = global.System.constructor.prototype;
+    var systemJSPrototype = global.PentaSystem.constructor.prototype;
 
     // safari unpredictably lists some new globals first or second in object order
     var firstGlobalProp, secondGlobalProp, lastGlobalProp;
@@ -850,7 +850,7 @@
    * filters and content type verifications
    */
   (function(global) {
-    var systemJSPrototype = global.System.constructor.prototype;
+    var systemJSPrototype = global.PentaSystem.constructor.prototype;
 
     var moduleTypesRegEx = /^[^#?]+\.(css|html|json|wasm)([?#].*)?$/;
     var _shouldFetch = systemJSPrototype.shouldFetch.bind(systemJSPrototype);
@@ -876,7 +876,7 @@
           return res.json()
           .then(function (json) {
             return new Response(new Blob([
-              'System.register([],function(e){return{execute:function(){e("default",' + JSON.stringify(json) + ')}}})'
+              'PentaSystem.register([],function(e){return{execute:function(){e("default",' + JSON.stringify(json) + ')}}})'
             ], {
               type: 'application/javascript'
             }));
@@ -888,7 +888,7 @@
               return ['url(', quotes, resolveUrl(relUrl1 || relUrl2, url), quotes, ')'].join('');
             });
             return new Response(new Blob([
-              'System.register([],function(e){return{execute:function(){var s=new CSSStyleSheet();s.replaceSync(' + JSON.stringify(source) + ');e("default",s)}}})'
+              'PentaSystem.register([],function(e){return{execute:function(){var s=new CSSStyleSheet();s.replaceSync(' + JSON.stringify(source) + ');e("default",s)}}})'
             ], {
               type: 'application/javascript'
             }));
@@ -896,9 +896,9 @@
         if (wasmContentType.test(contentType))
           return (WebAssembly.compileStreaming ? WebAssembly.compileStreaming(res) : res.arrayBuffer().then(WebAssembly.compile))
           .then(function (module) {
-            if (!global.System.wasmModules)
-              global.System.wasmModules = Object.create(null);
-            global.System.wasmModules[url] = module;
+            if (!global.PentaSystem.wasmModules)
+              global.PentaSystem.wasmModules = Object.create(null);
+            global.PentaSystem.wasmModules[url] = module;
             // we can only set imports if supported (eg early Safari doesnt support)
             var deps = [];
             var setterSources = [];
@@ -911,8 +911,8 @@
                 }
               });
             return new Response(new Blob([
-              'System.register([' + deps.join(',') + '],function(e){var i={};return{setters:[' + setterSources.join(',') +
-              '],execute:function(){return WebAssembly.instantiate(System.wasmModules[' + JSON.stringify(url) +
+              'PentaSystem.register([' + deps.join(',') + '],function(e){var i={};return{setters:[' + setterSources.join(',') +
+              '],execute:function(){return WebAssembly.instantiate(PentaSystem.wasmModules[' + JSON.stringify(url) +
               '],i).then(function(m){e(m.exports)})}}})'
             ], {
               type: 'application/javascript'

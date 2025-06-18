@@ -1,4 +1,4 @@
-System.register(["./export.js", "./reexport1.js", "./reexport2.js"], function (_export, _context) {
+PentaSystem.register(["./export.js", "./reexport1.js", "./reexport2.js"], function (_export, _context) {
   "use strict";
 
   var d, p, z, r, q;

@@ -5,7 +5,7 @@ import { resolveUrl } from '../common.js';
  * filters and content type verifications
  */
 (function(global) {
-  var systemJSPrototype = global.System.constructor.prototype;
+  var systemJSPrototype = global.PentaSystem.constructor.prototype;
 
   var moduleTypesRegEx = /^[^#?]+\.(css|html|json|wasm)([?#].*)?$/;
   var _shouldFetch = systemJSPrototype.shouldFetch.bind(systemJSPrototype)
@@ -31,7 +31,7 @@ import { resolveUrl } from '../common.js';
         return res.json()
         .then(function (json) {
           return new Response(new Blob([
-            'System.register([],function(e){return{execute:function(){e("default",' + JSON.stringify(json) + ')}}})'
+            'PentaSystem.register([],function(e){return{execute:function(){e("default",' + JSON.stringify(json) + ')}}})'
           ], {
             type: 'application/javascript'
           }));
@@ -43,7 +43,7 @@ import { resolveUrl } from '../common.js';
             return ['url(', quotes, resolveUrl(relUrl1 || relUrl2, url), quotes, ')'].join('');
           });
           return new Response(new Blob([
-            'System.register([],function(e){return{execute:function(){var s=new CSSStyleSheet();s.replaceSync(' + JSON.stringify(source) + ');e("default",s)}}})'
+            'PentaSystem.register([],function(e){return{execute:function(){var s=new CSSStyleSheet();s.replaceSync(' + JSON.stringify(source) + ');e("default",s)}}})'
           ], {
             type: 'application/javascript'
           }));
@@ -51,9 +51,9 @@ import { resolveUrl } from '../common.js';
       if (wasmContentType.test(contentType))
         return (WebAssembly.compileStreaming ? WebAssembly.compileStreaming(res) : res.arrayBuffer().then(WebAssembly.compile))
         .then(function (module) {
-          if (!global.System.wasmModules)
-            global.System.wasmModules = Object.create(null);
-          global.System.wasmModules[url] = module;
+          if (!global.PentaSystem.wasmModules)
+            global.PentaSystem.wasmModules = Object.create(null);
+          global.PentaSystem.wasmModules[url] = module;
           // we can only set imports if supported (eg early Safari doesnt support)
           var deps = [];
           var setterSources = [];
@@ -66,8 +66,8 @@ import { resolveUrl } from '../common.js';
               }
             });
           return new Response(new Blob([
-            'System.register([' + deps.join(',') + '],function(e){var i={};return{setters:[' + setterSources.join(',') +
-            '],execute:function(){return WebAssembly.instantiate(System.wasmModules[' + JSON.stringify(url) +
+            'PentaSystem.register([' + deps.join(',') + '],function(e){var i={};return{setters:[' + setterSources.join(',') +
+            '],execute:function(){return WebAssembly.instantiate(PentaSystem.wasmModules[' + JSON.stringify(url) +
             '],i).then(function(m){e(m.exports)})}}})'
           ], {
             type: 'application/javascript'

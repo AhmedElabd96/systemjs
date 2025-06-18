@@ -1,6 +1,6 @@
 let instantiateCount = 0;
 
-System.register("named-self-import", ["named-self-import/dep"], function (_export) {
+PentaSystem.register("named-self-import", ["named-self-import/dep"], function (_export) {
   instantiateCount++;
   var dep;
 
@@ -20,7 +20,7 @@ System.register("named-self-import", ["named-self-import/dep"], function (_expor
   };
 });
 
-System.register("named-self-import/dep", [], function (_export) {
+PentaSystem.register("named-self-import/dep", [], function (_export) {
   return {
     execute: function () {
       _export("method", function () {

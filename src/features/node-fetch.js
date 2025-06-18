@@ -5,8 +5,8 @@ import { fileURLToPath } from 'url';
 
 sourceMapSupport.install();
 
-global.System.constructor.prototype.shouldFetch = () => true;
-global.System.constructor.prototype.fetch = async url => {
+global.PentaSystem.constructor.prototype.shouldFetch = () => true;
+global.PentaSystem.constructor.prototype.fetch = async url => {
   if (url.startsWith('file:')) {
     try {
       const source = await fs.readFile(fileURLToPath(url.toString()));

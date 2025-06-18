@@ -30,11 +30,11 @@ Note that this error also can occur for external import maps (those with `src=""
 
 SystemJS Error #2 occurs when a module fails to instantiate.
 
-This occurs when the instantiate hook returns a Promise that resolves with no value. This generally occurs when a module was downloaded and executed but did not call [`System.register()`](/docs/api.md#systemregisterdeps-declare) (or `define()` for AMD modules). To fix, ensure that the module calls System.register during its initial, top-level execution.
+This occurs when the instantiate hook returns a Promise that resolves with no value. This generally occurs when a module was downloaded and executed but did not call [`PentaSystem.register()`](/docs/api.md#systemregisterdeps-declare) (or `define()` for AMD modules). To fix, ensure that the module calls PentaSystem.register during its initial, top-level execution.
 
 Instantiation refers to downloading and executing the code for a module. The instantiation for a single module refers to an array that represents the module's dependencies, exports, and code.
 
-SystemJS has various methods of instantiating modules, generally involving either a `<script>` or `fetch()`. A module should generally call [`System.register()`](/docs/api.md#systemregisterdeps-declare) during top-level execution, as the primary means of instantiating itself. Custom module instantiation can be implemented by [hooking System.instantiate](/docs/hooks.md#instantiateurl-parenturl---promise).
+SystemJS has various methods of instantiating modules, generally involving either a `<script>` or `fetch()`. A module should generally call [`PentaSystem.register()`](/docs/api.md#systemregisterdeps-declare) during top-level execution, as the primary means of instantiating itself. Custom module instantiation can be implemented by [hooking PentaSystem.instantiate](/docs/hooks.md#instantiateurl-parenturl---promise).
 
 ## 3
 
@@ -46,7 +46,7 @@ SystemJS loads modules by appending `<script>` elements to the DOM and waiting f
 
 Here are common reasons why a module could not be loaded:
 
-- **The url for the module is incorrect**. You can check this by opening up the module's URL in its own browser tab and verifying that a javascript file is shown. The module URL can be found in the browser devtools (the console and network tabs), or by calling `System.resolve('name')` in the browser console to view the full URL. Be sure to check port number! Also, verify that the URL returns javascript instead of HTML.
+- **The url for the module is incorrect**. You can check this by opening up the module's URL in its own browser tab and verifying that a javascript file is shown. The module URL can be found in the browser devtools (the console and network tabs), or by calling `PentaSystem.resolve('name')` in the browser console to view the full URL. Be sure to check port number! Also, verify that the URL returns javascript instead of HTML.
 - **The url is correct, but the web server that hosts it isn't running**. This often occurs when you're attempting to download a module from localhost, but haven't started up the web server (ie webpack-dev-server or `npm start`). Be sure to check the port number!
 - **The url is correct and the web server is running, but CORS is not enabled**. [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) is a security mechanism that browsers use to protect users. The server you are downloading the module from may need to enable cors by sending an [`Access-Control-Allow-Origin` header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin).
 - **The url is correct, web server running, CORS enabled, but host check fails**. This one is usually specific to webpack-dev-server, which has a [host check](https://webpack.js.org/configuration/dev-server/#devserverdisablehostcheck). You should disable that host check to be able to load modules cross origin.
@@ -87,7 +87,7 @@ To diagnose, first determine which module is the named AMD module. You can do so
 
 A common cause of this issue is that you are using webpack's [`output.library` option](https://webpack.js.org/configuration/output/#outputlibrary) or rollup's [`output.name` option](https://rollupjs.org/guide/en/#outputname), which both result in named AMD define. If your module is being imported by SystemJS, there is no benefit to keeping the library name, and you should remove it.
 
-Another common cause of this issue is for a third party scripts to call `define()` as part of their UMD build. Such scripts may call `define()` even when not triggered by `System.import()`, which can cause this error. In such cases, consider removing the SystemJS AMD extra entirely, so that they do not call `define()` at all.
+Another common cause of this issue is for a third party scripts to call `define()` as part of their UMD build. Such scripts may call `define()` even when not triggered by `PentaSystem.import()`, which can cause this error. In such cases, consider removing the SystemJS AMD extra entirely, so that they do not call `define()` at all.
 
 If none of those apply to your situation, consider adding the named-register extra:
 
@@ -129,7 +129,7 @@ Bare specifiers must be defined by import maps in SystemJS. To fix the warning, 
 </script>
 <script>
   // The "vue" specifier will now be "resolved" to https://unpkg.com/vue
-  System.import('vue');
+  PentaSystem.import('vue');
 </script>
 ```
 
@@ -137,18 +137,18 @@ A "specifier" is the string name of a module. A specifier may be a URL (`/thing.
 
 "Resolution" refers to converting a specifier into a URL. This happens in any of the following scenarios:
 
-- a module is loaded directly - `System.import('specifier')`
-- a module is loaded as a dependency - `System.register(['specifier'], ...)` or `define(['specifier'], ...)`
-- a module is resolved manually - `System.resolve('specifier')`
+- a module is loaded directly - `PentaSystem.import('specifier')`
+- a module is loaded as a dependency - `PentaSystem.register(['specifier'], ...)` or `define(['specifier'], ...)`
+- a module is resolved manually - `PentaSystem.resolve('specifier')`
 
-To fix this warning, you may either use [import maps](/docs/import-maps.md) or [hook System.resolve](/docs/hooks.md#resolveid-parenturl---string):
+To fix this warning, you may either use [import maps](/docs/import-maps.md) or [hook PentaSystem.resolve](/docs/hooks.md#resolveid-parenturl---string):
 
 ```html
 <script src="/system.js"></script>
 <script>
   (function () {
-    const originalResolve = System.constructor.prototype.resolve;
-    System.constructor.prototype.resolve = function (id) {
+    const originalResolve = PentaSystem.constructor.prototype.resolve;
+    PentaSystem.constructor.prototype.resolve = function (id) {
       try {
         return originalResolve.apply(this, arguments);
       } catch (err) {
@@ -272,22 +272,22 @@ SystemJS Warning #W2 is logged by SystemJS to implement [Step 6.1 of this part o
 
 ### ID is not a valid URL to set in the registry
 
-SystemJS Warning #W3 occurs when you call `System.set(id, module)` with an invalid id.
+SystemJS Warning #W3 occurs when you call `PentaSystem.set(id, module)` with an invalid id.
 
-The SystemJS module registry is similar to a browser's module registry, which identifies modules by URL. As such, the module id passed to System.set should be a URL, not a bare specifier. Note that you should set full URLs in the module registry, not page-relative URLs.
+The SystemJS module registry is similar to a browser's module registry, which identifies modules by URL. As such, the module id passed to PentaSystem.set should be a URL, not a bare specifier. Note that you should set full URLs in the module registry, not page-relative URLs.
 
-Setting non-URL IDs is not recommended, but can be supported by hooking the resolve function to ensure these IDs can be resolved. Typically System.resolve will always return a URL making these modules unloadable otherwise.
+Setting non-URL IDs is not recommended, but can be supported by hooking the resolve function to ensure these IDs can be resolved. Typically PentaSystem.resolve will always return a URL making these modules unloadable otherwise.
 
 ```js
 // bare specifiers are invalid
-System.set('foo', { some: 'value' });
+PentaSystem.set('foo', { some: 'value' });
 
 // page-relative URLs are invalid
-System.set('/foo.js', { some: 'value' });
-System.set('./foo.js', { some: 'value' });
+PentaSystem.set('/foo.js', { some: 'value' });
+PentaSystem.set('./foo.js', { some: 'value' });
 
 // Full urls are valid
-System.set('http://example.com/foo.js', { some: 'value' });
+PentaSystem.set('http://example.com/foo.js', { some: 'value' });
 ```
 
 
@@ -299,7 +299,7 @@ SystemJS Warning #W4 occurs when it failed downloading an external import map vi
 
 Reason for this can be a network issue (DNS failed, timeout, server down), a security restriction (CORS, CSP) or a non 2xx status code from the server providing the file.
 
-System.js treats failing import maps as a warning. It skips the failed import map and moves on processing the next one if present.
+PentaSystem.js treats failing import maps as a warning. It skips the failed import map and moves on processing the next one if present.
 
 ```js
 // references an unreachable import map
@@ -341,8 +341,8 @@ An AMD module is one that calls the global `define()` function to register itsel
 define('my-module-name', [], function () {});
 ```
 
-If you're only using named AMD modules as part of a script loaded by System.import() that contains exactly one module, then you do not need to include the named-register.js extra. However, if named AMD modules are created separately from a System.import() call, or if there are multiple named AMD modules in the same file, then you'll need the named-register.js extra to be able to access all of the named modules.
+If you're only using named AMD modules as part of a script loaded by PentaSystem.import() that contains exactly one module, then you do not need to include the named-register.js extra. However, if named AMD modules are created separately from a PentaSystem.import() call, or if there are multiple named AMD modules in the same file, then you'll need the named-register.js extra to be able to access all of the named modules.
 
-The reason for this is that SystemJS generally identifies modules by their URLs - one URL per module. Import Maps are the primary method to alias a bare specifier to a URL, but it's also possible to identify modules by a name without specifying a URL for each module, by creating named System.register or named AMD modules.
+The reason for this is that SystemJS generally identifies modules by their URLs - one URL per module. Import Maps are the primary method to alias a bare specifier to a URL, but it's also possible to identify modules by a name without specifying a URL for each module, by creating named PentaSystem.register or named AMD modules.
 
-When the SystemJS amd.js extra's `define` function is given a named AMD module, the module is identified by the URL of the currently executing script, if the script was loaded via `System.import()`. However, if the script was not loaded by `System.import()` or if there are multiple defines in the same script, then the module(s) will not have a URL associated with them and therefore will not be accessible by any identifier. To solve this problem, the named-register.js tracks all named modules (including named AMD modules and named System.register modules) by name, rather than by URL. This makes it possible to have one script that registers multiple named modules.
+When the SystemJS amd.js extra's `define` function is given a named AMD module, the module is identified by the URL of the currently executing script, if the script was loaded via `PentaSystem.import()`. However, if the script was not loaded by `PentaSystem.import()` or if there are multiple defines in the same script, then the module(s) will not have a URL associated with them and therefore will not be accessible by any identifier. To solve this problem, the named-register.js tracks all named modules (including named AMD modules and named PentaSystem.register modules) by name, rather than by URL. This makes it possible to have one script that registers multiple named modules.
