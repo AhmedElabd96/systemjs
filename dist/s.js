@@ -554,7 +554,7 @@
           return Promise.reject(e);
         });
       }
-      else if (script.type === 'systemjs-importmap') {
+      else if (script.type === 'pentasystemjs-importmap') {
         script.sp = true;
         // The passThrough property is for letting the module types fetch implementation know that this is not a SystemJS module.
         var fetchPromise = script.src ? (PentaSystem.fetch || fetch)(script.src, { integrity: script.integrity, priority: script.fetchPriority, passThrough: true }).then(function (res) {

@@ -67,7 +67,7 @@
       }
     }
 
-    global.define = function (arg1, arg2, arg3) {
+    global.pentaDefine = function (arg1, arg2, arg3) {
       var isNamedRegister = typeof arg1 === 'string';
       var name = isNamedRegister ? arg1 : null;
       var depArg = isNamedRegister ? arg2 : arg1;
@@ -108,7 +108,7 @@
       } else
         PentaSystem.register(amdRegister[0], amdRegister[1]);
     };
-    global.define.amd = {};
+    global.pentaDefine.amd = {};
   })(typeof self !== 'undefined' ? self : global);
 
 })();

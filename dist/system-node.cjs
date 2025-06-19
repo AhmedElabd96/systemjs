@@ -8624,7 +8624,7 @@ function processScripts () {
         return Promise.reject(e);
       });
     }
-    else if (script.type === 'systemjs-importmap') {
+    else if (script.type === 'pentasystemjs-importmap') {
       script.sp = true;
       // The passThrough property is for letting the module types fetch implementation know that this is not a SystemJS module.
       var fetchPromise = script.src ? (PentaSystem.fetch || fetch)(script.src, { integrity: script.integrity, priority: script.fetchPriority, passThrough: true }).then(function (res) {
@@ -8653,7 +8653,7 @@ function extendImportMap (importMap, newMapText, newMapUrl) {
   try {
     newMap = JSON.parse(newMapText);
   } catch (err) {
-    console.warn(Error((process.env.SYSTEM_PRODUCTION ? errMsg('W5') : errMsg('W5', "systemjs-importmap contains invalid JSON") + '\n\n' + newMapText + '\n' )));
+    console.warn(Error((process.env.SYSTEM_PRODUCTION ? errMsg('W5') : errMsg('W5', "pentasystemjs-importmap contains invalid JSON") + '\n\n' + newMapText + '\n' )));
   }
   resolveAndComposeImportMap(newMap, newMapUrl, importMap);
 }

@@ -1,6 +1,6 @@
 const appendImportMap = function (moduleId, src) {
   const script = document.createElement('script');
-  script.type = 'systemjs-importmap';
+  script.type = 'pentasystemjs-importmap';
 
   if (src) {
     script.async = true; // avoid theoretical timing issues
